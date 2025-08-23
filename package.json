@@ -5,9 +5,9 @@
   "main": "dist/index.ts",
   "type": "module",
   "scripts": {
-    "dev-old": "npx tsc && node --watch src/index.ts",
-    "dev": "node --loader=ts-node/esm --env-file=.env --watch src/index.ts",
-    "build": "npx tsc",
+    "dev": "node --no-warnings --loader ts-node/esm src/index.ts",
+    "dev:watch": "node --no-warnings --watch --loader ts-node/esm src/index.ts",
+    "build": "tsc",
     "start": "node --env-file=.env dist/index.js"
   },
   "repository": {
