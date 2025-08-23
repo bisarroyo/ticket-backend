@@ -10,13 +10,15 @@ import { clerkMiddleware } from "@clerk/express";
 import cors from "cors";
 
 // custom middlewares
-import { notFound } from "./middleware/not-found.ts";
-import { error } from "./middleware/error.ts";
+import { notFound } from "./middleware/not-found.js";
+import { error } from "./middleware/error.js";
 
-import { logRequestMethod, logHostname } from "./middleware/logMiddleware.ts";
-// import usersRoutes from './routes/auth.js'
-// import mailRoutes from './routes/mail.js'
-// import clientRoutes from './routes/clients.js'
+import { logRequestMethod, logHostname } from "./middleware/logMiddleware.js";
+
+import eventsRoutes from "./routes/events.route.js";
+// import mailsRoutes from "@/routes/mails.route.js";
+// import paymentsRoutes from "@/routes/payments.route.js";
+// import ticketsRoutes from "@/routes/tickets.route.js";
 
 const app = express();
 const port = process.env.PORT;
@@ -33,16 +35,17 @@ app.use(logHostname);
 // handle auth
 app.use(clerkMiddleware());
 
-app.use(notFound);
-app.use(error);
-
 app.get("/", (request: Request, response: Response) => {
   response.send("Hello World!!!!");
 });
 
-// app.use('/api/v1/auth', usersRoutes)
-// app.use('/api/v1/mail', mailRoutes)
-// app.use('/api/v1/clients', clientRoutes)
+app.use("/api/v1/events", eventsRoutes);
+// app.use("/api/v1/mail", mailsRoutes);
+// app.use("/api/v1/payments", paymentsRoutes);
+// app.use("/api/v1/payments", ticketsRoutes);
+
+app.use(notFound);
+app.use(error);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
