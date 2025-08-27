@@ -5,9 +5,9 @@ import { requireAuth, getAuth } from '@clerk/express'
 import {
     getAllEvents,
     getEventById,
-    createEvent
-    //   updateEvent,
-    //   deleteEvent,
+    createEvent,
+    updateEvent,
+    deleteEvent
 } from '../controllers/events.controller.js'
 
 const router = Router()
@@ -18,7 +18,7 @@ router.get('/:id', getEventById)
 
 // Protected routes
 router.post('/create', createEvent)
-// router.put("/:id", updateEvent);
-// router.delete("/:id", deleteEvent);
+router.put('/:id', updateEvent)
+router.delete('/:id', deleteEvent)
 
 export default router
