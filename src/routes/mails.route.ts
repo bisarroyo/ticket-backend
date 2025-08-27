@@ -1,18 +1,10 @@
-import { Router } from "express";
+import { Router } from 'express'
 
-// import {
-//   getClientsByCategory,
-//   getClientById,
-//   getClientByEmail,
-//   getClientByName,
-//   insertClient,
-//   updateClient,
-//   removeClient
-// } from '@/controllers/events'
+import { sendEmail } from '../controllers/mails.controller.ts'
 
-const router = Router();
+const router = Router()
 
-// router.get('/category/:category', getClientsByCategory)
+router.post('/send', sendEmail)
 // router.get('/id', getClientById)
 // router.get('/email', getClientByEmail)
 // router.get('/name', getClientByName)
@@ -20,8 +12,4 @@ const router = Router();
 // router.put('/update', updateClient)
 // router.delete('/remove', removeClient)
 
-router.get("/", (req, res) => {
-  res.send("Events route is working!");
-});
-
-export default router;
+export default router
