@@ -1,13 +1,6 @@
 import type { Request, Response } from 'express'
-import { db } from '../database/db.ts'
-import {
-    eventsTable,
-    sectionsTable,
-    venuesTable,
-    type Schema
-} from '../models/schema.js'
-import { eq } from 'drizzle-orm'
 import { CustomError } from '../lib/custom-error.js'
+import * as eventsService from '../services/events.services.ts'
 
 interface AuthRequest extends Request {
     auth: {
@@ -15,30 +8,10 @@ interface AuthRequest extends Request {
     }
 }
 
-type InsertEventsTable = Schema['InsertEventsTable']
-
 export const getAllEvents = async (req: Request, res: Response) => {
     try {
-        const events = await db
-            .select({
-                events: {
-                    id: eventsTable.id,
-                    name: eventsTable.name,
-                    date: eventsTable.date,
-                    eventImage: eventsTable.eventImage
-                },
-                venues: {
-                    id: venuesTable.id,
-                    name: venuesTable.name
-                }
-            })
-            .from(eventsTable)
-            .orderBy(eventsTable.date)
-            .leftJoin(venuesTable, eq(venuesTable.eventId, eventsTable.id))
+        const events = await eventsService.getEvents()
 
-        if (!events.length) {
-            throw new CustomError('No events found', 404)
-        }
         return res.status(200).json(events).header({
             'Content-Type': 'application/json'
         })
@@ -52,23 +25,10 @@ export const getEventById = async (req: Request, res: Response) => {
         const { id } = req.params
         if (!id) throw new CustomError('Event ID is required', 400)
 
-        const event = await db
-            .select()
-            .from(eventsTable)
-            .where(eq(eventsTable.id, Number(id)))
-            .leftJoin(venuesTable, eq(venuesTable.eventId, eventsTable.id))
-            .leftJoin(sectionsTable, eq(venuesTable.id, sectionsTable.venueId))
-            .all()
+        const event = await eventsService.getEventById(parseInt(id))
 
-        console.log(event)
-
-        if (!event.length) {
-            throw new CustomError('Event not found', 404)
-        }
-
-        return res.status(200).json(event[0])
+        return res.status(200).json(event)
     } catch (error) {
-        if (error instanceof CustomError) throw error
         throw new CustomError('Error getting event', 500)
     }
 }
@@ -78,20 +38,10 @@ export const createEvent = async (req: Request, res: Response) => {
         // todo validate user
         // todo validate input
         // todo concatenat venues and sections creation
-        const { name, eventImage, description } = req.body
-        const newEvent = await db.insert(eventsTable).values({
-            name,
-            date: new Date(),
-            startsAt: new Date(),
-            endsAt: new Date(),
-            eventImage,
-            description,
-            status: 'draft',
-            isActive: false,
-            isOnline: false,
-            capacity: 0
-        })
-        console.log(newEvent)
+        const eventData = req.body
+
+        const newEvent = await eventsService.createEvent(eventData)
+
         res.status(201).json(newEvent)
     } catch (error) {
         if (error instanceof CustomError) throw error
@@ -102,7 +52,7 @@ export const createEvent = async (req: Request, res: Response) => {
 export const updateEvent = async (req: Request, res: Response) => {
     try {
         const { id } = req.params
-        const { name, eventImage, description } = req.body
+        const updateData = req.body
         if (!id) throw new CustomError('Event ID is required', 400)
 
         const userId = '123' // temp fallback userId for testing
@@ -110,40 +60,11 @@ export const updateEvent = async (req: Request, res: Response) => {
             throw new CustomError('Unauthorized', 401)
         }
 
-        const event = await db
-            .select()
-            .from(eventsTable)
-            .where(eq(eventsTable.id, parseInt(id)))
-
-        if (!event.length) {
-            throw new CustomError('Event not found', 404)
-        }
-
-        if (event[0]?.userId !== userId) {
-            throw new CustomError(
-                'Unauthorized - You can only update your own events',
-                403
-            )
-        }
-
-        const updateData = {
-            ...req.body,
-            updatedAt: new Date().toISOString(),
-            date: new Date(req.body.date),
-            startsAt: new Date(req.body.startsAt),
-            endsAt: new Date(req.body.endsAt),
-            eventImage,
-            description,
-            status: 'draft',
-            isActive: false,
-            isOnline: false,
-            capacity: 0
-        }
-
-        await db
-            .update(eventsTable)
-            .set(updateData)
-            .where(eq(eventsTable.id, parseInt(id)))
+        const updatedEvent = await eventsService.updateEvent(
+            updateData,
+            id,
+            userId
+        )
 
         return res.status(200).json({ message: 'Event updated successfully' })
     } catch (error) {
@@ -152,33 +73,17 @@ export const updateEvent = async (req: Request, res: Response) => {
     }
 }
 
-export const deleteEvent = async (req: AuthRequest, res: Response) => {
+export const deleteEvent = async (req: Request, res: Response) => {
     try {
         const { id } = req.params
         if (!id) throw new CustomError('Event ID is required', 400)
 
-        const userId = req.auth?.userId
+        const userId = '123'
         if (!userId) {
             throw new CustomError('Unauthorized', 401)
         }
 
-        const event = await db
-            .select()
-            .from(eventsTable)
-            .where(eq(eventsTable.id, parseInt(id)))
-
-        if (!event.length) {
-            throw new CustomError('Event not found', 404)
-        }
-
-        if (event[0]?.userId !== userId) {
-            throw new CustomError(
-                'Unauthorized - You can only delete your own events',
-                403
-            )
-        }
-
-        await db.delete(eventsTable).where(eq(eventsTable.id, parseInt(id)))
+        const event = await eventsService.deleteEvent(id, userId)
 
         return res.status(200).json({ message: 'Event deleted successfully' })
     } catch (error) {
