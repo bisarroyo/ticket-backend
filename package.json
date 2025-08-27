@@ -28,6 +28,7 @@
     "dotenv": "^17.2.1",
     "drizzle-orm": "^0.44.4",
     "express": "^5.1.0",
+    "qrcode": "^1.5.4",
     "resend": "^6.0.1"
   },
   "license": "ISC",
@@ -39,6 +40,7 @@
     "@types/cors": "^2.8.19",
     "@types/dotenv": "^6.1.1",
     "@types/express": "^5.0.3",
+    "@types/qrcode": "^1.5.5",
     "drizzle-kit": "^0.31.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
