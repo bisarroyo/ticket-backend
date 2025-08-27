@@ -12,9 +12,9 @@ import { error } from './middleware/error.js'
 import { logRequestMethod, logHostname } from './middleware/logMiddleware.js'
 
 import eventsRoutes from './routes/events.route.js'
-import mailsRoutes from '@/routes/mails.route.js'
-import paymentsRoutes from '@/routes/payments.route.js'
-import ticketsRoutes from '@/routes/tickets.route.js'
+import mailsRoutes from './routes/mails.route.js'
+// import paymentsRoutes from '@/routes/payments.route.js'
+// import ticketsRoutes from '@/routes/tickets.route.js'
 
 const app = express()
 const port = process.env.PORT
@@ -37,8 +37,8 @@ app.get('/', (request: Request, response: Response) => {
 
 app.use('/api/v1/events', eventsRoutes)
 app.use('/api/v1/mail', mailsRoutes)
-app.use('/api/v1/payments', paymentsRoutes)
-app.use('/api/v1/payments', ticketsRoutes)
+// app.use('/api/v1/payments', paymentsRoutes)
+// app.use('/api/v1/payments', ticketsRoutes)
 
 app.get('/protected', requireAuth(), async (req: Request, res: Response) => {
     const { userId } = getAuth(req)
