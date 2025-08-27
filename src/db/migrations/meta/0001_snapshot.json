@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "e3a142dc-f580-4c55-ba7e-15980e76cfb8",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "e72de38e-cf2e-4d31-a3c8-55028baf9869",
+  "prevId": "e3a142dc-f580-4c55-ba7e-15980e76cfb8",
   "tables": {
     "events": {
       "name": "events",
@@ -37,8 +37,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "name": {
-          "name": "name",
+        "event_name": {
+          "name": "event_name",
           "type": "text",
           "primaryKey": false,
           "notNull": true,

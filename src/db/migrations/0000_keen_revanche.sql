@@ -77,7 +77,7 @@ CREATE TABLE `tickets` (
 --> statement-breakpoint
 CREATE TABLE `venues` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`name` text NOT NULL,
+	`venue_name` text NOT NULL,
 	`address` text NOT NULL,
 	`city` text NOT NULL,
 	`state` text NOT NULL,
