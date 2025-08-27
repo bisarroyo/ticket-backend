@@ -9,6 +9,7 @@ import { eq } from 'drizzle-orm'
 import { CustomError } from '../lib/custom-error.ts'
 
 type InsertEventsTable = Schema['InsertEventsTable']
+type InsertVenuesTable = Schema['InsertVenuesTable']
 
 export const getEvents = async () => {
     const events = await db
@@ -21,7 +22,7 @@ export const getEvents = async () => {
             },
             venues: {
                 id: venuesTable.id,
-                name: venuesTable.name
+                venueName: venuesTable.venueName
             }
         })
         .from(eventsTable)
@@ -49,22 +50,66 @@ export const getEventById = async (id: number) => {
     return event[0]
 }
 
-export const createEvent = async (data: InsertEventsTable) => {
-    const { name, eventImage, description } = data
-    const newEvent = await db.insert(eventsTable).values({
-        name,
-        date: new Date(),
-        startsAt: new Date(),
-        endsAt: new Date(),
-        eventImage,
-        description,
-        status: 'draft',
-        isActive: false,
-        isOnline: false,
-        capacity: 0
-    })
+export const createEvent = async (
+    data: InsertEventsTable & InsertVenuesTable
+) => {
+    const newEvent = await db
+        .insert(eventsTable)
+        .values({
+            name: data.name,
+            date: new Date(),
+            startsAt: new Date(),
+            endsAt: new Date(),
+            eventImage: data.eventImage || '',
+            description: data.description || '',
+            status: 'draft',
+            isActive: false,
+            isOnline: false,
+            capacity: 0
+        })
+        .returning()
+    if (!newEvent.length) {
+        throw new CustomError('Error creating event', 500)
+    }
+    const newVenue = await db
+        .insert(venuesTable)
+        .values({
+            venueName: data.venueName || 'Default Venue',
+            address: '123 Main St',
+            city: 'City',
+            state: 'State',
+            country: 'Country',
+            postalCode: '00000',
+            latitude: 0,
+            longitude: 0,
+            eventId: newEvent[0]?.id
+        })
+        .returning()
+    if (!newVenue) {
+        throw new CustomError('Error creating default venue', 500)
+    }
 
-    return newEvent
+    const newSection = await db
+        .insert(sectionsTable)
+        .values({
+            sectionName: 'General Admission',
+            price: 0,
+            description: 'Default section',
+            capacity: 100,
+            color: '#FFFFFF',
+            isActive: true,
+            venueId: newVenue[0]?.id || 1
+        })
+        .returning()
+    if (!newSection) {
+        throw new CustomError('Error creating default section', 500)
+    }
+
+    return {
+        newEvent,
+        newVenue,
+        newSection
+    }
 }
 
 export const updateEvent = async (
