@@ -92,7 +92,12 @@ export const createEvent = async (data: CreateEventRequest) => {
             isActive: data.event.isActive || false,
             isOnline: data.event.isOnline || false,
             capacity: 0,
-            userId: data.event.userId
+            userId: data.event.userId,
+            map: data.event.map || false,
+            displayMap: data.event.displayMap || false,
+            aditionalInfo: data.event.aditionalInfo || null,
+            prices: data.event.prices || null,
+            duration: data.event.duration || null
         })
         .returning()
 
@@ -239,6 +244,20 @@ export const updateEvent = async (
                     }),
                     ...(typeof data.event.isOnline !== 'undefined' && {
                         isOnline: data.event.isOnline
+                    }),
+                    ...(data.event.status && { status: data.event.status }),
+                    ...(data.event.aditionalInfo && {
+                        aditionalInfo: data.event.aditionalInfo
+                    }),
+                    ...(data.event.prices && { prices: data.event.prices }),
+                    ...(data.event.duration && {
+                        duration: data.event.duration
+                    }),
+                    ...(typeof data.event.map !== 'undefined' && {
+                        map: data.event.map
+                    }),
+                    ...(typeof data.event.displayMap !== 'undefined' && {
+                        displayMap: data.event.displayMap
                     })
                 })
                 .where(eq(eventsTable.id, parseInt(eventId)))
