@@ -122,6 +122,7 @@ export const ticketsTable = sqliteTable('tickets', {
     orderId: integer('order_id')
         .notNull()
         .references(() => ordersTable.id),
+    isUsed: integer('is_valid', { mode: 'boolean' }).notNull().default(false),
     usedAt: integer('used_at', { mode: 'timestamp' }),
     createdAt: text('created_at')
         .notNull()
@@ -149,6 +150,33 @@ export const ordersTable = sqliteTable('orders', {
     updatedAt: text('updated_at')
         .notNull()
         .default(sql`CURRENT_TIMESTAMP`)
+})
+
+export const payments = sqliteTable('payments', {
+    id: text('id').primaryKey(), // id interno (UUID)
+    onvoPaymentId: text('onvo_payment_id'), // id del pago en Onvo
+    status: text('status').notNull(), // created | processing | succeeded | failed | refunded
+    amount: integer('amount').notNull(), // en centavos
+    currency: text('currency').notNull(),
+    description: text('description'),
+    pmId: text('pm_id'), // payment_method_id tokenizado
+    customerEmail: text('customer_email'),
+    idempotencyKey: text('idempotency_key').unique(),
+    createdAt: integer('created_at')
+        .default(sql`(strftime('%s','now'))`)
+        .notNull(),
+    updatedAt: integer('updated_at')
+        .default(sql`(strftime('%s','now'))`)
+        .notNull()
+})
+
+export const webhookEvents = sqliteTable('webhook_events', {
+    id: text('id').primaryKey(),
+    type: text('type').notNull(),
+    raw: text('raw').notNull(),
+    receivedAt: integer('received_at')
+        .default(sql`(strftime('%s','now'))`)
+        .notNull()
 })
 
 export const EventsRelations = relations(eventsTable, ({ one }) => ({
