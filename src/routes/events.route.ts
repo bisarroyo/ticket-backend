@@ -18,7 +18,7 @@ router.get('/:id', getEventById)
 
 // Protected routes
 router.post('/create', createEvent)
-router.put('/:id', updateEvent)
-router.delete('/:id', deleteEvent)
+router.put('/update/:id', updateEvent)
+router.delete('/delete/:id', deleteEvent)
 
 export default router
