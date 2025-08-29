@@ -2,7 +2,7 @@
   "name": "ticket-backend",
   "version": "1.0.0",
   "description": "backend for ticket saas service",
-  "main": "dist/index.ts",
+  "main": "dist/index.ts", 
   "type": "module",
   "scripts": {
     "dev": "node --no-warnings --watch --loader ts-node/esm src/index.ts",
