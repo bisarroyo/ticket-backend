@@ -115,14 +115,12 @@ export const ticketsTable = sqliteTable('tickets', {
     sectionId: integer('section_id')
         .notNull()
         .references(() => sectionsTable.id),
-    seatId: integer('seat_id')
-        .notNull()
-        .references(() => seatsTable.id),
+    seatId: integer('seat_id').references(() => seatsTable.id),
     userId: text('user_id').notNull(),
     orderId: integer('order_id')
         .notNull()
         .references(() => ordersTable.id),
-    isUsed: integer('is_valid', { mode: 'boolean' }).notNull().default(false),
+    isValid: integer('is_valid', { mode: 'boolean' }).notNull().default(false),
     usedAt: integer('used_at', { mode: 'timestamp' }),
     createdAt: text('created_at')
         .notNull()
@@ -152,9 +150,9 @@ export const ordersTable = sqliteTable('orders', {
         .default(sql`CURRENT_TIMESTAMP`)
 })
 
-export const payments = sqliteTable('payments', {
+export const paymentsTable = sqliteTable('payments', {
     id: text('id').primaryKey(), // id interno (UUID)
-    onvoPaymentId: text('onvo_payment_id'), // id del pago en Onvo
+    onvoPaymentId: text('onvo_payment_id').notNull(), // id del pago en Onvo
     status: text('status').notNull(), // created | processing | succeeded | failed | refunded
     amount: integer('amount').notNull(), // en centavos
     currency: text('currency').notNull(),
@@ -220,4 +218,6 @@ export type Schema = {
     SelectTicketsTable: typeof ticketsTable.$inferSelect
     InsertOrdersTable: typeof ordersTable.$inferInsert
     SelectOrdersTable: typeof ordersTable.$inferSelect
+    InsertPaymentsTable: typeof paymentsTable.$inferInsert
+    SelectPaymentsTable: typeof paymentsTable.$inferSelect
 }
