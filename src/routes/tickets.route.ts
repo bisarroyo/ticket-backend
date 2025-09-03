@@ -1,27 +1,31 @@
-import { Router } from "express";
+import { Router } from 'express'
 
-// import {
-//   getClientsByCategory,
-//   getClientById,
-//   getClientByEmail,
-//   getClientByName,
-//   insertClient,
-//   updateClient,
-//   removeClient
-// } from '@/controllers/events'
+import {
+    getTicketById,
+    getTicketsByUser,
+    createTicket,
+    markTicketAsUsed,
+    getTicketsByEvent,
+    deleteTicket
+} from '../controllers/tickets.controller.js'
 
-const router = Router();
+const router = Router()
 
-// router.get('/category/:category', getClientsByCategory)
-// router.get('/id', getClientById)
-// router.get('/email', getClientByEmail)
-// router.get('/name', getClientByName)
-// router.post('/create', insertClient)
-// router.put('/update', updateClient)
-// router.delete('/remove', removeClient)
+// Public
+router.get('/event/:id', getTicketsByEvent)
+router.get('/:id', getTicketById)
+router.get('/user', getTicketsByUser)
 
-router.get("/", (req, res) => {
-  res.send("Events route is working!");
-});
+// Protected
+// router.post('/', requireAuth(), createTicket)
+// router.patch('/:id/use', requireAuth(), markTicketAsUsed)
+// router.delete('/:id', requireAuth(), deleteTicket)
+router.post('/', createTicket)
+router.patch('/:id/use', markTicketAsUsed)
+router.delete('/:id', deleteTicket)
 
-export default router;
+router.get('/', (req, res) => {
+    res.send('Ticket route is working!')
+})
+
+export default router
