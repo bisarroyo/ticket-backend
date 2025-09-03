@@ -55,7 +55,7 @@ export const updateEvent = async (req: Request, res: Response) => {
         const updateData = req.body
         if (!id) throw new CustomError('Event ID is required', 400)
 
-        const userId = '123' // temp fallback userId for testing
+        const userId = 'user_2xKdBHLM9' // temp fallback userId for testing
         if (!userId) {
             throw new CustomError('Unauthorized', 401)
         }
@@ -66,7 +66,7 @@ export const updateEvent = async (req: Request, res: Response) => {
             userId
         )
 
-        return res.status(200).json({ message: 'Event updated successfully' })
+        return res.status(200).json(updatedEvent)
     } catch (error) {
         if (error instanceof CustomError) throw error
         throw new CustomError('Error updating event', 500)
@@ -78,7 +78,7 @@ export const deleteEvent = async (req: Request, res: Response) => {
         const { id } = req.params
         if (!id) throw new CustomError('Event ID is required', 400)
 
-        const userId = '123'
+        const userId = 'user_2xKdBHLM9'
         if (!userId) {
             throw new CustomError('Unauthorized', 401)
         }
