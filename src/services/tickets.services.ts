@@ -1,12 +1,6 @@
 import { eq } from 'drizzle-orm'
 import { db } from '../database/db.js'
-import {
-    eventsTable,
-    sectionsTable,
-    venuesTable,
-    ticketsTable,
-    type Schema
-} from '../models/schema.js'
+import { ticketsTable, type Schema } from '../models/schema.js'
 
 type InsertTicketsTable = Schema['InsertTicketsTable']
 type SelectTicketsTable = Schema['SelectTicketsTable']
@@ -65,7 +59,7 @@ export const markTicketAsUsed: (
     const updatedTicket = await db
         .update(ticketsTable)
         .set({
-            isUsed: true,
+            isValid: false,
             usedAt: new Date() // current timestamp as Date object
         })
         .where(eq(ticketsTable.id, ticketId))
